@@ -19,8 +19,6 @@ public class Clicker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Debug.Log(IsPointerOverUIElement() ? "Over UI" : "Not over UI");
-
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Vector3 mousePos = Input.mousePosition;
