@@ -14,11 +14,16 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private const float openDuration = 0.25f;
     private float passedTime;
 
+    public GameObject physicalInteract;
+    private bool mouseSelected = false;
+
     // Start is called before the first frame update
     void Start()
     {
         recipePos = GetComponent<RectTransform>();
         snapshotRecipePos = targetRecipePos = new Vector3(recipePos.anchoredPosition.x, miniRecipeHeight, 0.0f);
+
+        physicalInteract = Resources.Load("3D Recipe Card") as GameObject;
     }
 
     // Update is called once per frame
@@ -31,11 +36,21 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
             recipePos.anchoredPosition = Vector3.Lerp(snapshotRecipePos, targetRecipePos, animPercentage);
         }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0) && mouseSelected)
+        {
+            Debug.Log("Recipe clicked on");
+
+            GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().HoldRecipeCard((int) (Input.mousePosition.x / 60.0f));
+            
+            GameObject physCard = Instantiate(physicalInteract, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane + 1)), Quaternion.Euler(-90.0f, 0.0f, 0.0f));
+            physCard.GetComponent<CardMovement_Recipe>().trackMouse();
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("Recipe moused over");
+        mouseSelected = true;
 
         snapshotRecipePos = recipePos.anchoredPosition;
         targetRecipePos = new Vector3(recipePos.anchoredPosition.x, fullRecipeHeight, 0.0f);
@@ -44,7 +59,7 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("Recipe moused off");
+        mouseSelected = false;
 
         snapshotRecipePos = recipePos.anchoredPosition;
         targetRecipePos = new Vector3(recipePos.anchoredPosition.x, miniRecipeHeight, 0.0f);

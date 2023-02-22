@@ -7,6 +7,7 @@ public class Clicker : MonoBehaviour
 {
     private Camera viewPoint;
     public Object targetCheck;
+    public GameObject heldObject;
 
     int maskUI;
     // Start is called before the first frame update
@@ -19,7 +20,7 @@ public class Clicker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !IsPointerOverUIElement())
         {
             Vector3 mousePos = Input.mousePosition;
             mousePos.x /= (float) Screen.width;
@@ -31,11 +32,7 @@ public class Clicker : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 Instantiate(targetCheck, hit.point, Quaternion.identity);
-                Debug.Log("Hit; " + mousePos);
-            }
-            else
-            {
-                Debug.Log("Miss; " + mousePos);
+                /* send a signal to the object to move while the mouse is down via a mouseTrack() function */
             }
         }
     }

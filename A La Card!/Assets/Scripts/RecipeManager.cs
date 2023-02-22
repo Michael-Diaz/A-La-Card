@@ -17,6 +17,9 @@ public class RecipeManager : MonoBehaviour
     private List<Recipe> activeRecipes;
     private int activeRecipiesNum = 0;
 
+    public Recipe offScreenContainer;
+    public bool offScreenContainerNull;
+
     [System.Serializable]
     public class Recipe
     {
@@ -58,11 +61,14 @@ public class RecipeManager : MonoBehaviour
         canvasUI = GameObject.Find("Canvas");
 
         activeRecipes = new List<Recipe>();
+
+        offScreenContainerNull = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Change for general insertion/recipe generation
         if (Input.GetKeyDown(KeyCode.Space))
         {
             GameObject recipe = Instantiate(recipePrefab, canvasUI.transform);
@@ -78,7 +84,8 @@ public class RecipeManager : MonoBehaviour
             activeRecipiesNum++;
         }
 
-        if (Input.GetKeyDown(KeyCode.Backspace))
+        // Change for general removal
+        /*if (Input.GetKeyDown(KeyCode.Backspace))
         {
             Destroy(activeRecipes[0].recipeCardRef);
             activeRecipes.RemoveAt(0);
@@ -88,6 +95,20 @@ public class RecipeManager : MonoBehaviour
 
             for (int i = 0; i < activeRecipiesNum; i++)
                 activeRecipes[i].resetLerp();
+        }*/
+
+        if (!offScreenContainerNull && Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            GameObject storedRecipe = Instantiate(recipePrefab, canvasUI.transform);
+            RectTransform storedRecipePos = storedRecipe.GetComponent<RectTransform>();
+            storedRecipePos.anchoredPosition = new Vector3(startRecipeDist, startRecipeHeight, 0.0f);
+            
+            activeRecipes.Add(new Recipe(storedRecipe));
+            activeRecipiesNum++;
+
+            activeRecipes[activeRecipiesNum - 1].resetLerp();
+
+            offScreenContainerNull = true;
         }
 
         for (int i = 0; i < activeRecipiesNum; i++)
@@ -104,5 +125,20 @@ public class RecipeManager : MonoBehaviour
                 tempContainer.recipeCardRef.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(tempContainer.lerpStart, tempContainer.lerpDest, animPercentage);
             }
         }
+    }
+
+    public void HoldRecipeCard(int index)
+    {
+        offScreenContainer = activeRecipes[index];
+        offScreenContainerNull = false;
+
+        Destroy(activeRecipes[index].recipeCardRef);
+        activeRecipes.RemoveAt(index);
+
+        if (activeRecipiesNum > 0)
+            activeRecipiesNum--;
+
+        for (int i = 0; i < activeRecipiesNum; i++)
+            activeRecipes[i].resetLerp();
     }
 }
