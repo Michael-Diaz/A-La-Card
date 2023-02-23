@@ -84,19 +84,6 @@ public class RecipeManager : MonoBehaviour
             activeRecipiesNum++;
         }
 
-        // Change for general removal
-        /*if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            Destroy(activeRecipes[0].recipeCardRef);
-            activeRecipes.RemoveAt(0);
-
-            if (activeRecipiesNum > 0)
-                activeRecipiesNum--;
-
-            for (int i = 0; i < activeRecipiesNum; i++)
-                activeRecipes[i].resetLerp();
-        }*/
-
         if (!offScreenContainerNull && Input.GetKeyUp(KeyCode.Mouse0))
         {
             GameObject storedRecipe = Instantiate(recipePrefab, canvasUI.transform);

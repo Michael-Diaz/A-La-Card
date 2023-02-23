@@ -17,6 +17,8 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public GameObject physicalInteract;
     private bool mouseSelected = false;
 
+    private Clicker mousePointer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +26,8 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         snapshotRecipePos = targetRecipePos = new Vector3(recipePos.anchoredPosition.x, miniRecipeHeight, 0.0f);
 
         physicalInteract = Resources.Load("3D Recipe Card") as GameObject;
+
+        mousePointer = GameObject.Find("Pointer Controller").GetComponent<Clicker>();
     }
 
     // Update is called once per frame
@@ -39,12 +43,12 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         if (Input.GetKeyDown(KeyCode.Mouse0) && mouseSelected)
         {
-            Debug.Log("Recipe clicked on");
-
             GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().HoldRecipeCard((int) (Input.mousePosition.x / 60.0f));
             
             GameObject physCard = Instantiate(physicalInteract, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane + 1)), Quaternion.Euler(-90.0f, 0.0f, 0.0f));
             physCard.GetComponent<CardMovement_Recipe>().trackMouse();
+
+            mousePointer.heldObject = physCard;
         }
     }
 

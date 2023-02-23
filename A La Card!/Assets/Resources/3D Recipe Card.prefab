@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7605685288149639539}
   - component: {fileID: 7605685288149639541}
   - component: {fileID: 7605685288149639538}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Phys Recipe Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 7605685288496430078}
   - component: {fileID: 7605685288496430016}
   - component: {fileID: 7605685288496430017}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Phys Timer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 7605685288966561681}
   - component: {fileID: 7605685288966561678}
   - component: {fileID: 7605685288966561679}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Physical Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -274,9 +274,9 @@ GameObject:
   - component: {fileID: 7605685288982627864}
   - component: {fileID: 7605685288982627865}
   - component: {fileID: 6527164980939345257}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: 3D Recipe Card
-  m_TagString: Untagged
+  m_TagString: Physical
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
