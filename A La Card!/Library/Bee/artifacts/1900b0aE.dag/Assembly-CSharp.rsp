@@ -320,6 +320,8 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/VSSettingsProvider.ref.dll"
 "Assets/Scripts/CardMovement_Recipe.cs"
 "Assets/Scripts/Clicker.cs"
+"Assets/Scripts/Cookbook.cs"
+"Assets/Scripts/Recipe.cs"
 "Assets/Scripts/RecipeControl.cs"
 "Assets/Scripts/RecipeManager.cs"
 -langversion:8.0

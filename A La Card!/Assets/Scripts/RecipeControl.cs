@@ -5,50 +5,69 @@ using UnityEngine.EventSystems;
 
 public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    private Clicker mousePointer;
     private RectTransform recipePos;
-    private Vector3 snapshotRecipePos;
-    private Vector3 targetRecipePos;
+
+    // Vertical Movement Variables
+    private Vector3 snapshotVertPos;
+    private Vector3 targetVertPos;
     private const float miniRecipeHeight = 40.0f;
-    private const float fullRecipeHeight = -50.0f;
-
+    private const float fullRecipeHeight = -65.0f;
     private const float openDuration = 0.25f;
-    private float passedTime;
+    private float passedTimeOpening;
 
+    // Horizontal Moment Variables
+    public Vector3 targetHorizPos;
+    public Vector3 snapshotHorizPos;
+    private float startRecipeDist = 60.0f + Screen.width;
+    private const float endRecipeDestConst = 60.0f;
+    private const float endRecipeDestMult = 110.0f;
+    public float slideDuration = 0.75f;
+    public float passedTimeSliding;
+
+    // Variables for generating a physical recipe
     public GameObject physicalInteract;
     private bool mouseSelected = false;
 
-    private Clicker mousePointer;
-
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        mousePointer = GameObject.Find("\"Chef\"").GetComponent<Clicker>();
+
         recipePos = GetComponent<RectTransform>();
-        snapshotRecipePos = targetRecipePos = new Vector3(recipePos.anchoredPosition.x, miniRecipeHeight, 0.0f);
+        snapshotVertPos = targetVertPos = snapshotHorizPos = targetHorizPos = new Vector3(startRecipeDist, miniRecipeHeight, 0.0f);
 
         physicalInteract = Resources.Load("3D Recipe Card") as GameObject;
-
-        mousePointer = GameObject.Find("Pointer Controller").GetComponent<Clicker>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (passedTime <= openDuration)
+        // Controls the vertical movement that expands the recipe card
+        if (passedTimeOpening <= openDuration)
         {
-            passedTime += Time.deltaTime;
-            float animPercentage = passedTime / openDuration;
+            passedTimeOpening += Time.deltaTime;
+            float animPercentage = passedTimeOpening / openDuration;
 
-            recipePos.anchoredPosition = Vector3.Lerp(snapshotRecipePos, targetRecipePos, animPercentage);
+            recipePos.anchoredPosition = Vector3.Lerp(snapshotVertPos, targetVertPos, animPercentage);
+        }
+
+        if (passedTimeSliding <= slideDuration)
+        {
+            passedTimeSliding += Time.deltaTime;
+            float animPercentage = passedTimeSliding / slideDuration;
+
+            recipePos.anchoredPosition = Vector3.Lerp(snapshotHorizPos, targetHorizPos, animPercentage);
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse0) && mouseSelected)
-        {
-            GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().HoldRecipeCard((int) (Input.mousePosition.x / 60.0f));
-            
-            GameObject physCard = Instantiate(physicalInteract, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane + 1)), Quaternion.Euler(-90.0f, 0.0f, 0.0f));
+        {            
+            GameObject physCard = Instantiate(physicalInteract, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane + 1)), Quaternion.Euler(-90.0f, 0.0f, 0.0f)); 
             physCard.GetComponent<CardMovement_Recipe>().trackMouse();
 
             mousePointer.heldObject = physCard;
+
+            GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().HoldRecipeCard((int) Input.mousePosition.x / ((Screen.width - 60) / 7));
         }
     }
 
@@ -56,17 +75,24 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         mouseSelected = true;
 
-        snapshotRecipePos = recipePos.anchoredPosition;
-        targetRecipePos = new Vector3(recipePos.anchoredPosition.x, fullRecipeHeight, 0.0f);
-        passedTime = 0.0f;
+        snapshotVertPos = recipePos.anchoredPosition;
+        targetVertPos = new Vector3(recipePos.anchoredPosition.x, fullRecipeHeight, 0.0f);
+        passedTimeOpening = 0.0f;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         mouseSelected = false;
 
-        snapshotRecipePos = recipePos.anchoredPosition;
-        targetRecipePos = new Vector3(recipePos.anchoredPosition.x, miniRecipeHeight, 0.0f);
-        passedTime = 0.0f;
+        snapshotVertPos = recipePos.anchoredPosition;
+        targetVertPos = new Vector3(recipePos.anchoredPosition.x, miniRecipeHeight, 0.0f);
+        passedTimeOpening = 0.0f;
+    }
+
+    public void setLerpDest(int index)
+    {
+        snapshotHorizPos = recipePos.anchoredPosition;
+        targetHorizPos = new Vector3(endRecipeDestConst + (index * endRecipeDestMult), miniRecipeHeight, 0.0f);
+        passedTimeSliding = 0.0f;
     }
 }

@@ -6,11 +6,11 @@ using UnityEngine.EventSystems;
 public class Clicker : MonoBehaviour
 {
     private Camera viewPoint;
-    public Object targetCheck;
-    public GameObject heldObject;
-
     int maskUI;
     LayerMask maskDynamicObj;
+
+    public GameObject heldObject;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,23 +31,23 @@ public class Clicker : MonoBehaviour
         Ray ray = viewPoint.ViewportPointToRay(new Vector3(mousePos.x, mousePos.y, 0));
         RaycastHit hit;
 
+        // For picking up phsyical elements
         if (Input.GetKeyDown(KeyCode.Mouse0) && !IsPointerOverUIElement())
         {
             if (Physics.Raycast(ray, out hit))
             {
-                // Instantiate(targetCheck, hit.point, Quaternion.identity);
                 /* send a signal to the object to move while the mouse is down via a mouseTrack() function */
                 if (hit.collider.gameObject.tag == "Physical")
                 {
                     heldObject = hit.collider.gameObject;
                     heldObject.GetComponent<CardMovement_Recipe>().trackMouse();
+                    GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().HoldPhysicalCard(heldObject);
                 }
             }
         }
 
         if (heldObject != null)
         {
-            Debug.Log("Holding object");
             bool checkForSlot = false;
             GameObject slotPos = null;
 
@@ -65,7 +65,6 @@ public class Clicker : MonoBehaviour
                 else
                 {
                     checkForSlot = false;
-
                     objectInHand = false;
                 }
 

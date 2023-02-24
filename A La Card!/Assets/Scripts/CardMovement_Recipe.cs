@@ -19,6 +19,8 @@ public class CardMovement_Recipe : MonoBehaviour
             {
                 if (slotPos != null)
                 {
+                    GameObject.Find("\"Chef\"").GetComponent<Clicker>().heldObject = null;
+
                     gameObject.transform.SetParent(slotPos.transform);
                     transform.localPosition = new Vector3(0.36f, 0.0f, -0.36f);
                     transform.localRotation = Quaternion.identity;
