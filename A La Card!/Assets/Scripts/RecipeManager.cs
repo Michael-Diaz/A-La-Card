@@ -24,12 +24,17 @@ public class RecipeManager : MonoBehaviour
     {
         canvasUI = GameObject.Find("Canvas");
 
+        float canvasWidth = canvasUI.GetComponent<RectTransform>().rect.width;
+        float canvasHeight = canvasUI.GetComponent<RectTransform>().rect.height;
+
+        canvasUI.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(canvasWidth, canvasHeight);
+
         mousePointer = GameObject.Find("\"Chef\"").GetComponent<Clicker>();
         cookbook = GameObject.Find("\"Recipe Vault\"").GetComponent<Cookbook>();
 
         activeRecipes = new List<GameObject>();
 
-        offScreenContainer = canvasUI.transform.GetChild(0).gameObject;
+        offScreenContainer = canvasUI.transform.GetChild(0).GetChild(0).gameObject;
         offScreenContainerNull = true;
     }
 
@@ -48,7 +53,7 @@ public class RecipeManager : MonoBehaviour
 
         if (!offScreenContainerNull && Input.GetKeyUp(KeyCode.Mouse0))
         {
-            GameObject storedRecipe = Instantiate(recipePrefab, canvasUI.transform);
+            GameObject storedRecipe = Instantiate(recipePrefab, canvasUI.transform.GetChild(0));
             cookbook.recreateRecipe(offScreenContainer, storedRecipe);
             storedRecipe.GetComponent<RecipeControl>().setLerpDest(activeRecipiesNum);
             
@@ -81,9 +86,16 @@ public class RecipeManager : MonoBehaviour
         cookbook.recreateRecipe(activeRecipes[index], offScreenContainer);
         offScreenContainerNull = false;
 
-        GameObject setToDestroy = activeRecipes[index];
-        activeRecipes.RemoveAt(index);
-        Destroy(setToDestroy);
+        removeRecipe(activeRecipes[index].GetComponent<RectTransform>());
+    }
+
+    public void removeRecipe(RectTransform position)
+    {
+        int posIndex = (int) (position.anchoredPosition.x - 60) / 110;
+
+        GameObject removal = activeRecipes[posIndex];
+        activeRecipes.RemoveAt(posIndex);
+        Destroy(removal);
 
         if (activeRecipiesNum > 0)
             activeRecipiesNum--;

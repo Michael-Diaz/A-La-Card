@@ -12,14 +12,15 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private Vector3 snapshotVertPos;
     private Vector3 targetVertPos;
     private const float miniRecipeHeight = 40.0f;
-    private const float fullRecipeHeight = -65.0f;
+    private float fullRecipeHeight = -62.5f;
+    private const float heightLimiter = 25.0f;
     private const float openDuration = 0.25f;
     private float passedTimeOpening;
 
     // Horizontal Moment Variables
     public Vector3 targetHorizPos;
     public Vector3 snapshotHorizPos;
-    private float startRecipeDist = 60.0f + Screen.width;
+    private float startRecipeDist = 60.0f;
     private const float endRecipeDestConst = 60.0f;
     private const float endRecipeDestMult = 110.0f;
     public float slideDuration = 0.75f;
@@ -29,15 +30,25 @@ public class RecipeControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public GameObject physicalInteract;
     private bool mouseSelected = false;
 
-    // Start is called before the first frame update
     void Awake()
     {
         mousePointer = GameObject.Find("\"Chef\"").GetComponent<Clicker>();
 
+        startRecipeDist += GameObject.Find("Canvas").GetComponent<RectTransform>().rect.width;
         recipePos = GetComponent<RectTransform>();
-        snapshotVertPos = targetVertPos = snapshotHorizPos = targetHorizPos = new Vector3(startRecipeDist, miniRecipeHeight, 0.0f);
+        recipePos.anchoredPosition = snapshotVertPos = targetVertPos = snapshotHorizPos = targetHorizPos = new Vector3(startRecipeDist, miniRecipeHeight, 0.0f);
 
         physicalInteract = Resources.Load("3D Recipe Card") as GameObject;
+    }
+
+    void Start()
+    {
+        string[] recipeIngredients = gameObject.GetComponent<Recipe>().ingredients;
+        for (int i = 0; i < 4; i++)
+        {
+            if (recipeIngredients[i] == "N/a")
+                fullRecipeHeight += heightLimiter;
+        }
     }
 
     // Update is called once per frame

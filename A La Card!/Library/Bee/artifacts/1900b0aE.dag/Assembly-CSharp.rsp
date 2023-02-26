@@ -321,6 +321,7 @@
 "Assets/Scripts/CardMovement_Recipe.cs"
 "Assets/Scripts/Clicker.cs"
 "Assets/Scripts/Cookbook.cs"
+"Assets/Scripts/IngredientManager.cs"
 "Assets/Scripts/Recipe.cs"
 "Assets/Scripts/RecipeControl.cs"
 "Assets/Scripts/RecipeManager.cs"

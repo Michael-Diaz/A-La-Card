@@ -7,6 +7,7 @@ TagManager:
   - Recipe Card
   - Physical
   - Slot
+  - Bell
   layers:
   - Default
   - TransparentFX

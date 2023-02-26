@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class Clicker : MonoBehaviour
 {
@@ -42,6 +43,15 @@ public class Clicker : MonoBehaviour
                     heldObject = hit.collider.gameObject;
                     heldObject.GetComponent<CardMovement_Recipe>().trackMouse();
                     GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().HoldPhysicalCard(heldObject);
+                }
+                else if (hit.collider.gameObject.tag == "Bell")
+                {
+                    GameObject[] allRecipes = GameObject.FindObjectsOfType(typeof(GameObject)).Select(g => g as GameObject).Where(obj => obj.name.Contains("Recipe Card(Clone)")).ToArray();
+
+                    foreach (GameObject rec in allRecipes)
+                    {
+                        rec.GetComponentInChildren<Recipe>().timerCountdown();
+                    }
                 }
             }
         }
