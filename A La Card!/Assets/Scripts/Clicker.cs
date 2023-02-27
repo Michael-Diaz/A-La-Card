@@ -41,8 +41,14 @@ public class Clicker : MonoBehaviour
                 if (hit.collider.gameObject.tag == "Physical")
                 {
                     heldObject = hit.collider.gameObject;
-                    heldObject.GetComponent<CardMovement_Recipe>().trackMouse();
-                    GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().HoldPhysicalCard(heldObject);
+                    if (heldObject.GetComponent<CardMovement_Recipe>() != null)
+                    {
+                        heldObject.GetComponent<CardMovement_Recipe>().trackMouse();
+                        GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().HoldPhysicalCard(heldObject);
+                    }
+                    else if (heldObject.GetComponent<CardMovement_Ingredient>() != null)
+                        heldObject.GetComponent<CardMovement_Ingredient>().trackMouse();
+
                 }
                 else if (hit.collider.gameObject.tag == "Bell")
                 {
@@ -52,6 +58,8 @@ public class Clicker : MonoBehaviour
                     {
                         rec.GetComponentInChildren<Recipe>().timerCountdown();
                     }
+
+                    GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().endTurn();
                 }
             }
         }
@@ -65,7 +73,9 @@ public class Clicker : MonoBehaviour
             {
                 bool objectInHand = false;
 
-                if (hit.collider.gameObject.tag == "Slot" && (hit.collider.gameObject.transform.GetChild(0).gameObject.transform.childCount == 0))
+                if ((((hit.collider.gameObject.tag == "Slot All" || hit.collider.gameObject.tag == "Slot Rec") && heldObject.name == "3D Recipe Card(Clone)") 
+                    || ((hit.collider.gameObject.tag == "Slot All" || hit.collider.gameObject.tag == "Slot Ing") && heldObject.name == "3D Ingredient Card(Clone)")) 
+                    && (hit.collider.gameObject.transform.GetChild(0).gameObject.transform.childCount == 0))
                 {
                     checkForSlot = true;
                     slotPos = hit.collider.gameObject.transform.GetChild(0).gameObject;
@@ -82,7 +92,10 @@ public class Clicker : MonoBehaviour
                     GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().offScreenContainerNull = objectInHand;
             }
 
-            heldObject.GetComponent<CardMovement_Recipe>().slotUpdate(checkForSlot, slotPos);
+            if (heldObject.GetComponent<CardMovement_Recipe>() != null)
+                heldObject.GetComponent<CardMovement_Recipe>().slotUpdate(checkForSlot, slotPos);
+            else if (heldObject.GetComponent<CardMovement_Ingredient>() != null)
+                heldObject.GetComponent<CardMovement_Ingredient>().slotUpdate(checkForSlot, slotPos);
         }
     }
 

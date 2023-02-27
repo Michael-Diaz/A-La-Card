@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class IngredientManager : MonoBehaviour
 {
+    private Clicker mousePointer;
+
     private bool showCards;
-    private const float showThreshold = 0.2f;
+    private const float showThreshold = 0.125f;
     private const float hideThreshold = 0.35f;
     private const float hideOffset = 0.25f;
     private float passedTime;
@@ -21,6 +23,8 @@ public class IngredientManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        mousePointer = GameObject.Find("\"Chef\"").GetComponent<Clicker>();
+
         showCards = false;
 
         showingCards = Vector3.zero;
@@ -41,7 +45,7 @@ public class IngredientManager : MonoBehaviour
     {
         Vector3 mousePos = Input.mousePosition;
 
-        if (!showCards && (mousePos.y <= Screen.height * showThreshold))
+        if (!showCards && (mousePos.y <= Screen.height * showThreshold) && mousePointer.heldObject == null)
         {
             showCards = true;
 

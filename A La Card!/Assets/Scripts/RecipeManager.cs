@@ -11,8 +11,10 @@ public class RecipeManager : MonoBehaviour
     private Clicker mousePointer;
     private Cookbook cookbook;
 
+    private int turnsRemaining = 80;
+
     private List<GameObject> activeRecipes;
-    private int activeRecipiesNum = 0;
+    private int activeRecipesNum = 0;
 
     public GameObject offScreenContainer;
     private GameObject offScreenTitle;
@@ -36,35 +38,30 @@ public class RecipeManager : MonoBehaviour
 
         offScreenContainer = canvasUI.transform.GetChild(0).GetChild(0).gameObject;
         offScreenContainerNull = true;
+
+        for (int i = 0; i < 3; i++)
+        {
+            newRecipe();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Change for general insertion/recipe generation
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            GameObject container = cookbook.generateRecipe(0);
-            container.GetComponent<RecipeControl>().setLerpDest(activeRecipiesNum);
-
-            activeRecipes.Add(container);
-            activeRecipiesNum++;
-        }
-
         if (!offScreenContainerNull && Input.GetKeyUp(KeyCode.Mouse0))
         {
             GameObject storedRecipe = Instantiate(recipePrefab, canvasUI.transform.GetChild(0));
             cookbook.recreateRecipe(offScreenContainer, storedRecipe);
-            storedRecipe.GetComponent<RecipeControl>().setLerpDest(activeRecipiesNum);
+            storedRecipe.GetComponent<RecipeControl>().setLerpDest(activeRecipesNum);
             
             activeRecipes.Add(storedRecipe);
-            activeRecipiesNum++;
+            activeRecipesNum++;
 
             offScreenContainerNull = true;
             mousePointer.heldObject = null;
         }
 
-        for (int i = 0; i < activeRecipiesNum; i++)
+        for (int i = 0; i < activeRecipesNum; i++)
         {
             GameObject tempContainer = activeRecipes[i];
             RecipeControl tempControl = tempContainer.GetComponent<RecipeControl>();
@@ -78,6 +75,15 @@ public class RecipeManager : MonoBehaviour
                 tempContainer.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(tempControl.snapshotHorizPos, tempControl.targetHorizPos, animPercentage);
             }
         }
+    }
+
+    public void newRecipe()
+    {
+        GameObject container = cookbook.generateRecipe(turnsRemaining);
+        container.GetComponent<RecipeControl>().setLerpDest(activeRecipesNum);
+
+        activeRecipes.Add(container);
+        activeRecipesNum++;
     }
 
     public void HoldRecipeCard(int index)
@@ -97,10 +103,10 @@ public class RecipeManager : MonoBehaviour
         activeRecipes.RemoveAt(posIndex);
         Destroy(removal);
 
-        if (activeRecipiesNum > 0)
-            activeRecipiesNum--;
+        if (activeRecipesNum > 0)
+            activeRecipesNum--;
 
-        for (int i = 0; i < activeRecipiesNum; i++)
+        for (int i = 0; i < activeRecipesNum; i++)
             activeRecipes[i].GetComponent<RecipeControl>().setLerpDest(i);
     }
 
@@ -110,5 +116,20 @@ public class RecipeManager : MonoBehaviour
 
         cookbook.recreateRecipe(recipeLocation, mousePointer.heldObject);
         cookbook.recreateRecipe(recipeLocation, offScreenContainer);
+    }
+
+    public void endTurn()
+    {
+        if (turnsRemaining > 1)
+        {
+            turnsRemaining--;
+
+            int activeRecipesSnapshot = activeRecipesNum;
+            if ((activeRecipesSnapshot < 7))
+            {
+                for (int i = 1; i < Random.Range(1, Mathf.Min(5, 7 - activeRecipesSnapshot + 2)); i++)
+                    newRecipe();
+            }
+        }
     }
 }
