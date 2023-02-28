@@ -60,6 +60,7 @@ public class Clicker : MonoBehaviour
                     }
 
                     GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().endTurn();
+                    GameObject.Find("\"Prep Cook\"").GetComponent<IngredientManager>().endTurn();
                 }
             }
         }

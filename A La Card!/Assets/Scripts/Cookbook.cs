@@ -11,11 +11,16 @@ public class Cookbook : MonoBehaviour
     private const float startRecipeHeight = 40.0f;
     private float startRecipeDist = 60.0f + Screen.width;
 
-    string[] meats = {"Beef", "Chicken", "Fish", "Pork"};
-    string[] veggies = {"Asparagus", "Broccoli", "Corn", "Garlic", "Mushrooms", "Onions", "Potatoes", "Spinach", "Tomatoes"};
-    string[] grains = {"Flour", "Pasta", "Rice"};
-    string[] fats = {"Butter", "Lard", "Oil"};
-    string[] dairy = {"Cheese", "Cream", "Milk", "Sourcream", "Yogurt"};
+    private string[] meats = {"Beef", "Chicken", "Fish", "Pork"};
+    private string[] veggies = {"Asparagus", "Broccoli", "Corn", "Garlic", "Mushrooms", "Onions", "Potatoes", "Spinach", "Tomatoes"};
+    private string[] grains = {"Flour", "Pasta", "Rice"};
+    private string[] fats = {"Butter", "Lard", "Oil"};
+    private string[] dairy = {"Cheese", "Cream", "Milk", "Sourcream", "Yogurt"};
+    private Color[] baseColors = {new Color(0.75f, 0.0f, 0.0f, 1.0f), 
+                                  new Color(0.0f, 0.6f, 0.0f, 1.0f), 
+                                  new Color(0.6f, 0.3f, 0.0f, 1.0f), 
+                                  new Color(1.0f, 1.0f, 0.1f, 1.0f), 
+                                  new Color(0.6f, 0.8f, 1.0f, 1.0f)};
 
     private bool veganDish;
 
@@ -132,5 +137,50 @@ public class Cookbook : MonoBehaviour
         recipeInfoCopy.vegan = recipeInfoOriginal.vegan;
         recipeInfoCopy.difficulty = recipeInfoOriginal.difficulty;
         recipeInfoCopy.timer = recipeInfoOriginal.timer;
+    }
+
+    public void assignIngredient(int remainingTurns, GameObject recipeCard)
+    {
+        string ingredientName = "";
+        Color ingredientColorBase;
+        Color ingredientColorTop;
+
+        int typeScalar;
+        float maxRange = (totalTurns - (remainingTurns + 1)) / (float) totalTurns;
+        float difficultyMeter = Random.Range(0.0f, maxRange);
+
+        if (difficultyMeter <= difficultyConstant)
+            typeScalar = 3;
+        else
+            typeScalar = 5;
+
+        int ingredientType = Random.Range(0, typeScalar);
+
+        ingredientColorBase = baseColors[ingredientType];
+        ingredientColorTop = new Color(Mathf.Min(ingredientColorBase.r + 0.1f, 1.0f), Mathf.Min(ingredientColorBase.g + 0.1f, 1.0f), Mathf.Min(ingredientColorBase.b + 0.1f, 1.0f), 1.0f);
+
+
+        switch (ingredientType)
+        {
+            case 0:
+                ingredientName = meats[Random.Range(0, 4)];
+                break;
+            case 1:
+                ingredientName = veggies[Random.Range(0, 9)];
+                break;
+            case 2:
+                ingredientName = grains[Random.Range(0, 3)];
+                break;
+            case 3:
+                ingredientName = fats[Random.Range(0, 3)];
+                break;
+            case 4:
+                ingredientName = dairy[Random.Range(0, 5)];
+                break;
+        }
+
+        recipeCard.GetComponent<Image>().color = ingredientColorBase;
+        recipeCard.transform.GetChild(0).gameObject.GetComponent<Image>().color = ingredientColorTop;
+        recipeCard.transform.GetChild(1).gameObject.GetComponent<Text>().text = ingredientName;
     }
 }

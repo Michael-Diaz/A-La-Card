@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardMovement_Ingredient : MonoBehaviour
 {
+    private GameObject ingredientUI;
+    private GameObject refCard;
+    private int refCardID;
     private bool followingMouse;
+
     private bool overSlot;
     private GameObject slotPos;
 
@@ -29,7 +34,14 @@ public class CardMovement_Ingredient : MonoBehaviour
 
             }
             else
+            {
+                refCard.SetActive(true);
+                refCard.GetComponent<IngredientControl>().resetCardPos();
+
+                refCard.GetComponent<IngredientControl>().reassign = false;
+
                 Destroy(gameObject);
+            }
         }
 
         if (followingMouse)
@@ -39,6 +51,29 @@ public class CardMovement_Ingredient : MonoBehaviour
             transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane + 1));
             transform.rotation = Quaternion.Euler(-90.0f * (Input.mousePosition.y / Screen.height), 0.0f, 0.0f);
         }
+    }
+
+    public void assignRef(int cardID)
+    {
+        ingredientUI = GameObject.Find("Ingredient Bar");
+
+        refCardID = cardID;
+        string cardName = "Card_" + refCardID.ToString();
+
+        for (int i = 0; i < 7; i++)
+        {
+            if (ingredientUI.transform.GetChild(i).gameObject.name == cardName)
+            {
+                refCard = ingredientUI.transform.GetChild(i).gameObject;
+            }
+        }
+
+        Transform ingredientUIContainer = gameObject.transform.GetChild(0);
+        ingredientUIContainer.GetChild(0).gameObject.GetComponent<Image>().color = refCard.GetComponent<Image>().color;
+        ingredientUIContainer.GetChild(1).gameObject.GetComponent<Image>().color = refCard.transform.GetChild(0).gameObject.GetComponent<Image>().color;
+        ingredientUIContainer.GetChild(2).gameObject.GetComponent<Text>().text = refCard.transform.GetChild(1).gameObject.GetComponent<Text>().text;
+
+        refCard.SetActive(false);
     }
 
     public void trackMouse()

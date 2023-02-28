@@ -5,6 +5,9 @@ using UnityEngine;
 public class IngredientManager : MonoBehaviour
 {
     private Clicker mousePointer;
+    private Cookbook cookbook;
+
+    private int turnsRemaining = 80;
 
     private bool showCards;
     private const float showThreshold = 0.125f;
@@ -19,11 +22,13 @@ public class IngredientManager : MonoBehaviour
 
     private GameObject ingredientsUI;
     private RectTransform ingredientsUIPos;
+    private GameObject[] recipeCards = new GameObject[7];
 
     // Start is called before the first frame update
     void Start()
     {
         mousePointer = GameObject.Find("\"Chef\"").GetComponent<Clicker>();
+        cookbook = GameObject.Find("\"Recipe Vault\"").GetComponent<Cookbook>();
 
         showCards = false;
 
@@ -38,6 +43,12 @@ public class IngredientManager : MonoBehaviour
         ingredientsUI = canvasUI.transform.GetChild(1).gameObject;
         ingredientsUIPos = ingredientsUI.GetComponent<RectTransform>();
         ingredientsUIPos.sizeDelta = new Vector2(canvasWidth, canvasHeight);
+
+        for (int i = 0; i < 7; i++)
+        {
+            recipeCards[i] = GameObject.Find("Ingredient Bar").transform.GetChild(i).gameObject;
+            cookbook.assignIngredient(turnsRemaining, recipeCards[i]);
+        }
     }
 
     // Update is called once per frame
@@ -68,6 +79,27 @@ public class IngredientManager : MonoBehaviour
             float animPercentage = passedTime / toggleDuration;
 
             ingredientsUIPos.anchoredPosition = Vector3.Lerp(startPosition, endPosition, animPercentage);
+        }
+    }
+
+    public void endTurn()
+    {
+        if (turnsRemaining > 1)
+        {
+            turnsRemaining--;
+
+            for (int i = 0; i < 7; i++)
+            {
+                if (recipeCards[i].GetComponent<IngredientControl>().reassign)
+                {
+                    cookbook.assignIngredient(turnsRemaining, recipeCards[i]);
+
+                    recipeCards[i].SetActive(true);
+                    recipeCards[i].GetComponent<IngredientControl>().resetCardPos();
+
+                    recipeCards[i].GetComponent<IngredientControl>().reassign = false;
+                }
+            }
         }
     }
 }

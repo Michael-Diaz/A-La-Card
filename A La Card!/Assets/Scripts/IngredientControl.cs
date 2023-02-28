@@ -7,6 +7,7 @@ public class IngredientControl : MonoBehaviour, IPointerEnterHandler, IPointerEx
 {
     private int cardID;
     private RectTransform ingredientPos;
+    public bool reassign;
 
     private Clicker mousePointer;
     public GameObject physicalInteract;
@@ -20,7 +21,7 @@ public class IngredientControl : MonoBehaviour, IPointerEnterHandler, IPointerEx
     private Vector3 currentScale;
     private const float zoomScalar = 1.1f;
     private float passedTime;
-    private const float focusingDuration = 0.4f;
+    private const float focusingDuration = 0.15f;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +30,7 @@ public class IngredientControl : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
         cardID = int.Parse(gameObject.name.Substring(gameObject.name.Length - 1));
         ingredientPos = gameObject.GetComponent<RectTransform>();
+        reassign = false;
 
         cardCurrent = cardShrink = ingredientPos.anchoredPosition;
         cardZoom = new Vector3(cardShrink.x, 0.0f, 0.0f);
@@ -65,8 +67,11 @@ public class IngredientControl : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {            
             GameObject physCard = Instantiate(physicalInteract, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane + 1)), Quaternion.Euler(-90.0f, 0.0f, 0.0f)); 
             physCard.GetComponent<CardMovement_Ingredient>().trackMouse();
+            physCard.GetComponent<CardMovement_Ingredient>().assignRef(cardID);
 
             mousePointer.heldObject = physCard;
+
+            reassign = true;
         }
     }
 
@@ -82,6 +87,11 @@ public class IngredientControl : MonoBehaviour, IPointerEnterHandler, IPointerEx
     }
 
     public void OnPointerExit(PointerEventData eventData)
+    {
+        resetCardPos();
+    }
+
+    public void resetCardPos()
     {
         cardCurrent = ingredientPos.anchoredPosition;
         currentRotation = ingredientPos.rotation;
