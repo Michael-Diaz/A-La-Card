@@ -443,6 +443,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 072bf7d5bf135e545942d3a14a54446a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cooked: 0
+  combinations: 0000000000
 --- !u!1 &7578920031025221555
 GameObject:
   m_ObjectHideFlags: 0

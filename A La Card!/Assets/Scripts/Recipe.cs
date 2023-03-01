@@ -59,10 +59,7 @@ public class Recipe : MonoBehaviour
         if (timer == 1)
         {
             if (gameObject.name == "Recipe Card(Clone)")
-            {
                 GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().removeRecipe(gameObject.GetComponent<RectTransform>());
-
-            }
             else
                 Destroy(gameObject.transform.parent.gameObject);
         }

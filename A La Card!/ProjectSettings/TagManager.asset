@@ -6,10 +6,8 @@ TagManager:
   tags:
   - Recipe Card
   - Physical
-  - Slot
   - Bell
   - Slot All
-  - Slot Rec
   - Slot Ing
   layers:
   - Default

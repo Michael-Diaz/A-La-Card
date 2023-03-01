@@ -69,7 +69,7 @@ public class Cookbook : MonoBehaviour
         int recipeTimer = 0;
         string[] repiceIngredients;
 
-        float maxRange = (totalTurns - (remainingTurns + 1)) / (float) totalTurns;
+        float maxRange = (totalTurns - remainingTurns) / (float) totalTurns;
         float difficultyMeter = Random.Range(0.0f, maxRange);
 
         string entree = "N/a";
@@ -146,10 +146,11 @@ public class Cookbook : MonoBehaviour
         Color ingredientColorTop;
 
         int typeScalar;
-        float maxRange = (totalTurns - (remainingTurns + 1)) / (float) totalTurns;
-        float difficultyMeter = Random.Range(0.0f, maxRange);
+        float maxRange = (totalTurns - remainingTurns) / (float) totalTurns;
 
-        if (difficultyMeter <= difficultyConstant)
+        //Debug.Log("turns: " + remainingTurns + "@ maxRange:(" + maxRange + ") = diffMeter, " + difficultyMeter);
+
+        if (maxRange <= difficultyConstant)
             typeScalar = 3;
         else
             typeScalar = 5;
@@ -163,19 +164,19 @@ public class Cookbook : MonoBehaviour
         switch (ingredientType)
         {
             case 0:
-                ingredientName = meats[Random.Range(0, 4)];
+                ingredientName = "Raw " + meats[Random.Range(0, 4)];
                 break;
             case 1:
-                ingredientName = veggies[Random.Range(0, 9)];
+                ingredientName = "Raw " + veggies[Random.Range(0, 9)];
                 break;
             case 2:
-                ingredientName = grains[Random.Range(0, 3)];
+                ingredientName = "Dry " + grains[Random.Range(0, 3)];
                 break;
             case 3:
-                ingredientName = fats[Random.Range(0, 3)];
+                ingredientName = "Cold " + fats[Random.Range(0, 3)];
                 break;
             case 4:
-                ingredientName = dairy[Random.Range(0, 5)];
+                ingredientName = "Cold " + dairy[Random.Range(0, 5)];
                 break;
         }
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using System.Linq;
 
 public class Clicker : MonoBehaviour
@@ -52,13 +53,22 @@ public class Clicker : MonoBehaviour
                 }
                 else if (hit.collider.gameObject.tag == "Bell")
                 {
-                    GameObject[] allRecipes = GameObject.FindObjectsOfType(typeof(GameObject)).Select(g => g as GameObject).Where(obj => obj.name.Contains("Recipe Card(Clone)")).ToArray();
+                    Text bellTimer = hit.collider.gameObject.transform.GetChild(0).GetChild(0).GetChild(0).gameObject.GetComponent<Text>();
+                    bellTimer.text = Mathf.Max((int.Parse(bellTimer.text)) - 1, 0).ToString();
 
+                    GameObject[] allRecipes = GameObject.FindObjectsOfType(typeof(GameObject)).Select(g => g as GameObject).Where(obj => obj.name.Contains("Recipe Card(Clone)")).ToArray();
                     foreach (GameObject rec in allRecipes)
                     {
                         rec.GetComponentInChildren<Recipe>().timerCountdown();
                     }
 
+                    GameObject[] allIngredients = GameObject.FindObjectsOfType(typeof(GameObject)).Select(g => g as GameObject).Where(obj => obj.name.Contains("3D Ingredient Card(Clone)")).ToArray();
+                    foreach (GameObject ing in allIngredients)
+                    {
+                        ing.GetComponentInChildren<CardMovement_Ingredient>().timerCountdown();
+                    }
+
+                    GameObject.Find("\"Runner\"").GetComponent<PointTracker>().endTurn();
                     GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().endTurn();
                     GameObject.Find("\"Prep Cook\"").GetComponent<IngredientManager>().endTurn();
                 }
@@ -74,14 +84,50 @@ public class Clicker : MonoBehaviour
             {
                 bool objectInHand = false;
 
-                if ((((hit.collider.gameObject.tag == "Slot All" || hit.collider.gameObject.tag == "Slot Rec") && heldObject.name == "3D Recipe Card(Clone)") 
-                    || ((hit.collider.gameObject.tag == "Slot All" || hit.collider.gameObject.tag == "Slot Ing") && heldObject.name == "3D Ingredient Card(Clone)")) 
-                    && (hit.collider.gameObject.transform.GetChild(0).gameObject.transform.childCount == 0))
+                if (((hit.collider.gameObject.tag == "Slot All" && heldObject.name == "3D Recipe Card(Clone)") 
+                    || ((hit.collider.gameObject.tag == "Slot All" || hit.collider.gameObject.tag == "Slot Ing") && heldObject.name == "3D Ingredient Card(Clone)")))
                 {
-                    checkForSlot = true;
-                    slotPos = hit.collider.gameObject.transform.GetChild(0).gameObject;
+                    if (heldObject.name == "3D Ingredient Card(Clone)")
+                    {
+                        if (hit.collider.gameObject.transform.GetChild(0).gameObject.transform.childCount == 0)
+                        {
+                            slotPos = hit.collider.gameObject.transform.GetChild(0).gameObject;
 
-                    objectInHand = true;
+                            checkForSlot = true;
+                            objectInHand = true;
+
+                            heldObject.GetComponent<CardMovement_Ingredient>().tryingCombo = false;
+                        }
+                        else
+                        {
+                            if (heldObject.GetComponent<CardMovement_Ingredient>().cooked)
+                            {
+                                slotPos = hit.collider.gameObject.transform.GetChild(0).gameObject;
+
+                                checkForSlot = true;
+                                objectInHand = true;
+
+                                heldObject.GetComponent<CardMovement_Ingredient>().tryingCombo = true;
+                            }
+                            else
+                            {
+                                checkForSlot = false;
+                                objectInHand = false;
+                            }
+                        }
+                    }
+                    else if (heldObject.name == "3D Recipe Card(Clone)" && hit.collider.gameObject.transform.GetChild(1).gameObject.transform.childCount == 0)
+                    {
+                        slotPos = hit.collider.gameObject.transform.GetChild(1).gameObject;
+
+                        checkForSlot = true;
+                        objectInHand = true;
+                    }
+                    else
+                    {
+                        checkForSlot = false;
+                        objectInHand = false;
+                    }
                 }
                 else
                 {
@@ -92,7 +138,7 @@ public class Clicker : MonoBehaviour
                 if (heldObject.name == "3D Recipe Card(Clone)")
                     GameObject.Find("\"Waiter\"").GetComponent<RecipeManager>().offScreenContainerNull = objectInHand;
             }
-
+            
             if (heldObject.GetComponent<CardMovement_Recipe>() != null)
                 heldObject.GetComponent<CardMovement_Recipe>().slotUpdate(checkForSlot, slotPos);
             else if (heldObject.GetComponent<CardMovement_Ingredient>() != null)

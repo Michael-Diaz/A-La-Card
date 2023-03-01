@@ -324,6 +324,7 @@
 "Assets/Scripts/Cookbook.cs"
 "Assets/Scripts/IngredientControl.cs"
 "Assets/Scripts/IngredientManager.cs"
+"Assets/Scripts/PointTracker.cs"
 "Assets/Scripts/Recipe.cs"
 "Assets/Scripts/RecipeControl.cs"
 "Assets/Scripts/RecipeManager.cs"

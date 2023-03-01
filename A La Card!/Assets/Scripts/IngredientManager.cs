@@ -11,7 +11,7 @@ public class IngredientManager : MonoBehaviour
 
     private bool showCards;
     private const float showThreshold = 0.125f;
-    private const float hideThreshold = 0.35f;
+    private const float hideThreshold = 0.30f;
     private const float hideOffset = 0.25f;
     private float passedTime;
     private Vector3 startPosition;
